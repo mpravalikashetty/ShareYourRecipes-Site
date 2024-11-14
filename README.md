@@ -25,6 +25,7 @@ Once the user submit their recipe, It will undergo a approval process and notify
     
   * Use 'Show Previous Recipe & Show Next Recipe' buttons to change see new recipes
   * Use 'Quick View of All recipes' button to see all recipes in one go
+  * Click on View Recipe Details to hit third party API and fetch that particular recipe details
     
 ![image](https://github.com/user-attachments/assets/2043422c-ad62-4bc2-ae5f-e8fa95787ece)
 
@@ -35,7 +36,11 @@ Once the user submit their recipe, It will undergo a approval process and notify
 
 ![image](https://github.com/user-attachments/assets/28944dc6-c14c-4dd2-b1a0-ac556c822c9f)
 
-<b>Step 4:</b> on click of 'Share Your Recipes' buttom below UI will be populated
+<b>Step 4:</b> When recipe is not found in third party database, it fetches recipe from shared recipes by other users i.e my own sfdc org database
+
+![image](https://github.com/user-attachments/assets/0a0ccee9-8e13-4fc3-80a8-3d0a144ea666)
+
+<b>Step 5:</b> on click of 'Share Your Recipes' buttom below UI will be populated
 
   * Enter the required details like Recipe Name & Summary
   * Submit the recipe using 'Submit Recipe' button
@@ -43,7 +48,7 @@ Once the user submit their recipe, It will undergo a approval process and notify
     
 ![image](https://github.com/user-attachments/assets/248a40de-b553-41ee-be4c-5f65594bc8bc)
 
-  <b>Step 5:</b> Toast Messages
+  <b>Step 6:</b> Toast Messages
   * Below toast fires when no recipe is found with search key in third party as well as sfdc database.
  
 ![image](https://github.com/user-attachments/assets/2f1730a3-f26e-465e-b90b-4173c2a0ae5e)
