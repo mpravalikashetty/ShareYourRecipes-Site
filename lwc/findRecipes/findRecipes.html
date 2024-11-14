@@ -1,0 +1,237 @@
+<!--
+  @description       : findRecipe->Alt+shift+F-for indentation
+-->
+<template>
+  <div if:true={loading}>
+    <lightning-spinner style="position:fixed;" alternative-text="Loading" size="larger"></lightning-spinner>
+  </div>
+  <template if:false={showOutOfService}>
+    <header class="custom-header" style={bgStyle}>
+      <!--<h1
+        style="background-color:beige;border-radius:50%;padding:10px;transform:rotate(-8deg);font-family:cursive;">
+        Share Your Recipes</h1>-->
+    </header>
+    <lightning-card>
+      <template if:false={showShareRecipeScreen}>
+        <div style="display:flex;align-items:center;gap:50px" class="slds-grid slds-wrap">
+          <div style="margin:20px;Width:500px" class="slds-col">
+            <lightning-input style="font-weight:bold;font-size:medium;flex-grow:1;margin-bottom:10px"
+              label="Enter Ingredient or Recipe Name" type="text" onchange={handleIngredient}></lightning-input>
+            <lightning-button label="Search" onclick={handleSearch} type="submit" variant="brand"></lightning-button>
+          </div>
+          <div class="slds-col" >
+          <h1 style="font-weight:bold;font-size:medium;font-size:larger;text-align:center">(OR)</h1>
+        </div>
+        <div class="slds-col" style="margin:20px">
+          <lightning-button variant="success" label="Click to Share Your Recipe with Us!"
+            onclick={handleShareBtn}></lightning-button>
+          </div>
+        </div>
+        <!--Search By Ingredient Code Start-->
+        <template if:false={showAllRecipes}>
+          <template if:true={rec}>
+            <lightning-card key={rec.Id}>
+              <div class="slds-grid slds-wrap">
+                <div style="padding-left: 2rem; padding-right: 2rem;"
+                  class="slds-p-vertical_small slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+                  <h1 style="Font-size:15px;color:dodgerblue"><b>{rec.title}</b></h1>
+                  <template if:true={showViewRecipeBtn}>
+                    <lightning-button style="padding-top: 5%;" variant="sucess" label="View Recipe Details"
+                      onclick={handleViewRecipeClick} data-id={rec.id}></lightning-button>
+                  </template>
+                  <template lwc:if={fullRecipe}>
+                    <template lwc:if={fullRecipe.servings}>
+                      <p><b>No.of Servings:</b> {fullRecipe.servings}</p>
+                    </template>
+                    <template lwc:if={fullRecipe.readyInMinutes}>
+                      <p><b>ready In Minutes :</b> {fullRecipe.readyInMinutes}</p>
+                    </template>
+                    <template lwc:if={fullRecipe.dairyFree}>
+                      <p><b>Dairy Free : </b>{fullRecipe.dairyFree}</p>
+                    </template>
+                    <template lwc:if={fullRecipe.glutenFree}>
+                      <p><b>Gluten Free : </b>{fullRecipe.glutenFree}</p>
+                    </template>
+                    <template lwc:if={fullRecipe.sourceUrl}>
+                      <p style="font-size:15px">Recipe Link: <a href={fullRecipe.sourceUrl} target="_blank"><b>Cooking
+                          Procedure</b></a></p>
+                    </template>
+                    <template lwc:if={fullRecipe.summary}>
+                      <p><b>Summary :</b> {fullRecipe.summary}</p>
+                    </template>
+                  </template>
+                </div>
+                <div style="padding-left: 2rem; padding-right: 2rem;"
+                  class="slds-p-vertical_small slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+                  <img src={rec.image} style="width: 90%;height: 50%;border-radius: 4px;overflow: hidden;"
+                    alt="Image" />
+                </div>
+              </div>
+              <template if:false={mobile}>
+              <lightning-button variant="brand" style="padding: 20px" onclick={showPreviousItem}
+                disabled={hasPreviousItemDisabled} label="Show Previous Recipe"></lightning-button>
+              <lightning-button variant="brand" style="padding: 20px" onclick={showNextItem}
+                disabled={hasNextItemDisabled} label="Show Next Recipe"></lightning-button>
+              <lightning-button variant="brand" onclick={showAllItems}
+                label="Quick View of All Recipes"></lightning-button>
+              </template>
+              <template if:true={mobile}>
+                <div class="slds-grid slds-wrap">
+                <lightning-button variant="brand" style="padding:2px" onclick={showPreviousItem}
+                  disabled={hasPreviousItemDisabled} label="Show Previous Recipe"></lightning-button>
+                <lightning-button variant="brand"  onclick={showNextItem} style="padding:2px"
+                  disabled={hasNextItemDisabled} label="Show Next Recipe"></lightning-button>
+                <lightning-button variant="brand" onclick={showAllItems}
+                  label="Quick View of All Recipes"></lightning-button>
+                </div>
+                </template>
+            </lightning-card>
+          </template>
+          <template if:true={showDB}>
+            <template lwc:if={foundedRecipesFromDB}>
+              <div class="slds-grid slds-wrap">
+                <div style="padding-left: 2rem; padding-right: 2rem;"
+                  class="slds-p-vertical_small slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+                  <h1 style="Font-size:15px;color:dodgerblue"><b>{foundedRecipesFromDB.Recipe_Name__c}</b></h1>
+                    <template lwc:if={foundedRecipesFromDB.Servings__c}>
+                      <p><b>No.of Servings:</b> {foundedRecipesFromDB.Servings__c}</p>
+                    </template>
+                    <template lwc:if={foundedRecipesFromDB.Ready_In_Minutes__c}>
+                      <p><b>ready In Minutes :</b> {foundedRecipesFromDB.Ready_In_Minutes__c}</p>
+                    </template>
+                      <p><b>Dairy Free :</b> {foundedRecipesFromDB.Is_Dairy_Free__c}</p>
+                      <p><b>Gluten Free :</b> {foundedRecipesFromDB.Is_Gluten_Free__c}</p>
+                  <template lwc:if={foundedRecipesFromDB.Summary__c}>
+                    <p><b>Summary :</b> {foundedRecipesFromDB.Summary__c}</p>
+                  </template>
+                  <template lwc:if={foundedRecipesFromDB.Ingredients__c}>
+                    <p><b>Ingredients :</b> {foundedRecipesFromDB.Ingredients__c}</p>
+                  </template>
+                  <template lwc:if={foundedRecipesFromDB.Procedure__c}>
+                    <p><b>Cooking Procedure :</b> {foundedRecipesFromDB.Procedure__c}</p>
+                  </template>
+                </div>
+                <div style="padding-left: 2rem; padding-right: 2rem;"
+                  class="slds-p-vertical_small slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+                  <img src={foundedRecipesFromDB.Image__c}
+                    style="width: 90%;height: 50%;border-radius: 4px;overflow: hidden;" alt="Image"></img>
+                </div>
+              </div>
+            </template>
+          </template>
+        </template>
+        <!--Search By Ingredient Code end-->
+        <!--Quick View of All Recipes Btn Code Start-->
+        <template if:true={showAllRecipes}>
+          <lightning-button style="padding:20px;" variant="destructive" label="Click to go Back"
+            onclick={handleBack}></lightning-button>
+          <template if:true={foundedRecipes}>
+            <template for:each={foundedRecipes} for:item="recs">
+              <div key={recs.id}>
+                <div class="slds-grid slds-wrap">
+                  <div style="padding-left: 2rem; padding-right: 2rem;"
+                    class="slds-p-vertical_small slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+                    <h1 style="Font-size:15px;color:dodgerblue"><b>{recs.title}</b></h1>
+                  </div>
+                  <div style="padding-left: 2rem; padding-right: 2rem;"
+                    class="slds-p-vertical_small slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+                    <img src={recs.image} style="width: 90%;height: 50%;border-radius: 4px;overflow: hidden;"
+                      alt="Image" />
+                  </div>
+                </div>
+              </div>
+            </template>
+          </template>
+        </template>
+      </template>
+        <!--Quick View of All Recipes Btn Code Start-->
+      <template if:true={showShareRecipeScreen}>
+        <template if:false={mobile}>
+          <lightning-button style="padding:20px;" variant="destructive" label="Click to go Back"
+          onclick={handleShareBack}></lightning-button>
+          <div class="slds-grid ">
+          <div class="slds-col slds-p-horizontal_x-large slds-size_1-of-2">
+            <lightning-record-edit-form object-api-name="New_Recipe__c">
+              <lightning-input-field field-name="Recipe_Name__c" name="recipeName"
+                onchange={handleInputValues}></lightning-input-field>
+              <lightning-input-field field-name="Summary__c" name="summary" onchange={handleInputValues} required></lightning-input-field>
+              <lightning-input-field field-name="Servings__c"></lightning-input-field>
+              <lightning-input-field field-name="Ready_In_Minutes__c"></lightning-input-field>
+              <div class="slds-grid slds-wrap">
+                <div class="top_margin  slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+              <lightning-input-field field-name="Is_Dairy_Free__c"></lightning-input-field>
+              </div>
+                <div class="top_margin  slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+              <lightning-input-field field-name="Is_Gluten_Free__c"></lightning-input-field>
+                </div>
+              </div>
+              <lightning-input-field field-name="Ingredients__c" name="ingredients"></lightning-input-field>
+              <lightning-input-field field-name="Procedure__c" name="procedure"></lightning-input-field>
+              <lightning-input-field field-name="Recipe_Link__c" name="recipeLink"></lightning-input-field>
+              <lightning-input-field field-name="Image__c"></lightning-input-field>
+              <lightning-input-field field-name="Email__c"></lightning-input-field>
+              <div class="slds-grid slds-wrap">
+                <div class="slds-col" style="padding:5px">
+              <lightning-button  variant="destructive" label="Click to go Back" onclick={handleShareBack}></lightning-button>
+            </div>
+            <div class="slds-col" style="padding-top:3px">
+              <lightning-button type="submit" label="Submit Your Recipe" variant="brand" onclick={handleSubmit} ></lightning-button>
+            </div>
+              </div>
+            </lightning-record-edit-form>
+          </div>
+          <div class="slds-col slds-p-horizontal_x-large slds-size_1-of-2">
+            <br/>
+            <img src={shareRecipeImageUrl} alt="Image" style="width:100%;height:81%;border-radius:10px"/>
+          </div>
+          </div>
+        </template>
+        <template if:true={mobile}>
+          <div class="slds-grid">
+          <div class="slds-col slds-p-horizontal_x-large slds-size_1-of-1">
+            <lightning-record-edit-form object-api-name="New_Recipe__c">
+              <lightning-input-field field-name="Recipe_Name__c" name="recipeName"
+                onchange={handleInputValues}></lightning-input-field>
+              <lightning-input-field field-name="Summary__c" name="summary" onchange={handleInputValues} required></lightning-input-field>
+              <lightning-input-field field-name="Servings__c"></lightning-input-field>
+              <lightning-input-field field-name="Ready_In_Minutes__c"></lightning-input-field>
+              <div class="slds-grid slds-wrap">
+                <div class="top_margin  slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+              <lightning-input-field field-name="Is_Dairy_Free__c"></lightning-input-field>
+              </div>
+                <div class="top_margin  slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_6-of-12">
+              <lightning-input-field field-name="Is_Gluten_Free__c"></lightning-input-field>
+                </div>
+              </div>
+              <lightning-input-field field-name="Ingredients__c" name="ingredients"></lightning-input-field>
+              <lightning-input-field field-name="Procedure__c" name="procedure"></lightning-input-field>
+              <lightning-input-field field-name="Recipe_Link__c" name="recipeLink"></lightning-input-field>
+              <lightning-input-field field-name="Image__c"></lightning-input-field>
+              <lightning-input-field field-name="Email__c"></lightning-input-field>
+              <div class="slds-grid slds-wrap">
+                <div class="slds-col" style="padding-bottom:5px">
+                  <lightning-button type="submit" label="Submit Your Recipe" variant="brand" onclick={handleSubmit} ></lightning-button>
+            </div>
+            <div class="slds-col">
+              <lightning-button  variant="destructive" label="Click to go Back" onclick={handleShareBack}></lightning-button>    
+            </div>
+              </div>
+            </lightning-record-edit-form>
+          </div>
+        </div>
+        </template>
+      </template>
+    </lightning-card>
+  </template>
+  <template if:true={showOutOfService}>
+    <lightning-card>
+      <h1 style="font-size:30px">
+        <center>Sorry for the inconvenience caused.</center><br />
+        <center> We've reached today's limit</center> <br />
+        <center style="color:rgb(67, 243, 23)">Kindly visit tomorrow !!</center>
+        *--Feel free to share your recipe ---*<lightning-button style="padding:20px;" variant="destructive" label="Click to go Back"
+          onclick={handleShareBack}></lightning-button>
+      </h1>
+    </lightning-card>
+  </template>
+</template>
