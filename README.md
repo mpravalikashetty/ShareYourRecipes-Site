@@ -1,7 +1,10 @@
 # ShareYourRecipes-Site
 Hi,
-Feel free to explore the site by clicking this link: 	https://psl250-dev-ed.develop.my.site.com/ShareYourRecipewithPravalika
+Feel free to explore the site by clicking below link:
 
+https://psl250-dev-ed.develop.my.site.com/ShareYourRecipewithPravalika
+
+Note: This site is Desktop and Mobile friendly.
 I have developed a LWC component which take input as either ingredient name or recipe name from end user.
 Based on that I am fetching recipes from third party API's with information like is it gluten free,diary free, procedure, no of servings, cooking time etc.
 If no recipe found then user can submit their own recipe using 'Share your recipe' button.
